@@ -1,10 +1,10 @@
 # Groot Session Description Fixer
 A Python specialized tool for automating session data organization and description standardization in GR00T robotics data collection workflows.
 
-================================================================================
+=
                      Gear GR00T Session Description Fixer
                            Desktop Application (v1.0)
-================================================================================
+=
 
 INSTALLATION & USAGE:
 
@@ -73,10 +73,10 @@ INSTALLATION & USAGE:
    - Make sure you have read/write permissions in the session folder
    - Check the log area in the application for error messages
 
-================================================================================
+=
 Version 1.0 (Beta)
 © 2025 Kyle Josef Bonachita. All rights reserved.
 Proprietary and Confidential.
 For internal use by the NVIDIA Gear GR00t Collections Project only.
 Unauthorized distribution prohibited.
-================================================================================
+=
