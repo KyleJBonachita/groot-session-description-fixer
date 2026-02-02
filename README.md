@@ -76,7 +76,7 @@ INSTALLATION & USAGE:
    - Make sure you have read/write permissions in the session folder
    - Check the log area in the application for error messages
 
-=
+
 Version 1.0 (Beta)
 © 2025 Kyle Josef Bonachita. All rights reserved.
 Proprietary and Confidential.
