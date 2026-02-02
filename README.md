@@ -4,7 +4,7 @@ A Python specialized tool for automating session data organization and descripti
 =
                      Gear GR00T Session Description Fixer
                            Desktop Application (v1.0)
-=
+
 
 INSTALLATION & USAGE:
 
@@ -22,6 +22,9 @@ INSTALLATION & USAGE:
    - Open Terminal
    - Navigate to the folder with session_fixer.py
    - Type: python3 ./session_fixer.py
+
+   Option C (Windows / Ubuntu):
+   - Open "session_fixer.exe"
 
 3. USING THE APPLICATION:
 
