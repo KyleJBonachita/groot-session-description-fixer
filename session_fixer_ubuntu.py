@@ -5,9 +5,10 @@ import re
 import shutil
 from pathlib import Path
 from tkinter import *
-from tkinter import ttk, filedialog, messagebox, scrolledtext
+from tkinter import ttk, messagebox, scrolledtext
 from threading import Thread
 import tkinter.font as tkFont
+import subprocess
 
 class SessionFixer:
     def __init__(self, root):
@@ -377,7 +378,7 @@ class SessionFixer:
         dev_frame = Frame(content, bg='white')
         dev_frame.pack(pady=(15, 10))
         Label(dev_frame, text="Developed by:", font=("Arial", 9, "bold"), bg='white', fg='#7f8c8d').pack()
-        developers = ["Kyle Josef Bonachita"]
+        developers = ["Kyle Josef Bonachita", "Rafael Sarmiento"]
         Label(dev_frame, text="  |  ".join(developers), font=("Arial", 11, "bold"), bg='white', fg='#16a085').pack(pady=2)
         Label(dev_frame, text="Data Collector", font=("Arial", 9), bg='white', fg='#7f8c8d').pack()
         Label(dev_frame, text="HCL Technologies Philippines", font=("Arial", 9), bg='white', fg='#7f8c8d').pack()
@@ -412,35 +413,41 @@ class SessionFixer:
         ttk.Separator(main_frame, orient=HORIZONTAL).grid(row=3, column=0, columnspan=3, sticky=(E, W), pady=10)
         
         ttk.Label(main_frame, text="STEP 1: Segregate Folders", font=("Arial", 11, "bold")).grid(row=4, column=0, sticky=W, pady=5)
-        ttk.Button(main_frame, text="▶ Create LI 1 & LI 2 Folders and Segregate Episodes", command=self.segregate_folders).grid(row=5, column=0, columnspan=2, sticky=(E, W), pady=5)
+        ttk.Label(
+            main_frame,
+            text="How it works: LI 1 gets even episodes (0, 2, 4, 6, 8…). LI 2 gets odd episodes (1, 3, 5, 7, 9…).",
+            font=("Arial", 9),
+            foreground="#555555"
+        ).grid(row=5, column=0, columnspan=3, sticky=W, padx=20)
+        ttk.Button(main_frame, text="▶ Create LI 1 & LI 2 Folders and Segregate Episodes", command=self.segregate_folders).grid(row=6, column=0, columnspan=2, sticky=(E, W), pady=5)
         
-        ttk.Separator(main_frame, orient=HORIZONTAL).grid(row=6, column=0, columnspan=3, sticky=(E, W), pady=10)
+        ttk.Separator(main_frame, orient=HORIZONTAL).grid(row=7, column=0, columnspan=3, sticky=(E, W), pady=10)
         
-        ttk.Label(main_frame, text="STEP 2: Fix Descriptions", font=("Arial", 11, "bold")).grid(row=7, column=0, sticky=W, pady=5)
-        ttk.Label(main_frame, text="Task Name:", font=("Arial", 10, "bold")).grid(row=8, column=0, sticky=W, padx=20)
+        ttk.Label(main_frame, text="STEP 2: Fix Descriptions", font=("Arial", 11, "bold")).grid(row=8, column=0, sticky=W, pady=5)
+        ttk.Label(main_frame, text="Task Name:", font=("Arial", 10, "bold")).grid(row=9, column=0, sticky=W, padx=20)
         self.task_var = StringVar()
-        task_dropdown = ttk.Combobox(main_frame, textvariable=self.task_var, values=list(self.task_descriptions.keys()), state="readonly", width=60)
-        task_dropdown.grid(row=8, column=1, sticky=W, padx=5)
+        task_dropdown = ttk.Combobox(main_frame, textvariable=self.task_var, values=sorted(self.task_descriptions.keys()), state="readonly", width=60)
+        task_dropdown.grid(row=9, column=1, sticky=W, padx=5)
         task_dropdown.bind("<<ComboboxSelected>>", self.on_task_selected)
-        
-        ttk.Label(main_frame, text="LI 1 Correct Description:", font=("Arial", 10, "bold")).grid(row=9, column=0, sticky=(W, N), padx=20, pady=(10, 0))
+
+        ttk.Label(main_frame, text="LI 1 Correct Description:", font=("Arial", 10, "bold")).grid(row=10, column=0, sticky=(W, N), padx=20, pady=(10, 0))
         self.li1_text = scrolledtext.ScrolledText(main_frame, height=3, width=70)
-        self.li1_text.grid(row=9, column=1, columnspan=2, sticky=(E, W, N, S), padx=5, pady=5)
-        ttk.Label(main_frame, text="LI 2 Correct Description:", font=("Arial", 10, "bold")).grid(row=10, column=0, sticky=(W, N), padx=20, pady=(10, 0))
+        self.li1_text.grid(row=10, column=1, columnspan=2, sticky=(E, W, N, S), padx=5, pady=5)
+        ttk.Label(main_frame, text="LI 2 Correct Description:", font=("Arial", 10, "bold")).grid(row=11, column=0, sticky=(W, N), padx=20, pady=(10, 0))
         self.li2_text = scrolledtext.ScrolledText(main_frame, height=3, width=70)
-        self.li2_text.grid(row=10, column=1, columnspan=2, sticky=(E, W, N, S), padx=5, pady=5)
-        ttk.Button(main_frame, text="▶ Start Description Fix", command=self.start_fix_descriptions).grid(row=11, column=0, columnspan=2, sticky=(E, W), pady=10)
+        self.li2_text.grid(row=11, column=1, columnspan=2, sticky=(E, W, N, S), padx=5, pady=5)
+        ttk.Button(main_frame, text="▶ Start Description Fix", command=self.start_fix_descriptions).grid(row=12, column=0, columnspan=2, sticky=(E, W), pady=10)
         
-        ttk.Separator(main_frame, orient=HORIZONTAL).grid(row=12, column=0, columnspan=3, sticky=(E, W), pady=10)
+        ttk.Separator(main_frame, orient=HORIZONTAL).grid(row=13, column=0, columnspan=3, sticky=(E, W), pady=10)
         
-        ttk.Label(main_frame, text="Processing Log:", font=("Arial", 10, "bold")).grid(row=13, column=0, sticky=W, pady=5)
+        ttk.Label(main_frame, text="Processing Log:", font=("Arial", 10, "bold")).grid(row=14, column=0, sticky=W, pady=5)
         self.log_text = scrolledtext.ScrolledText(main_frame, height=15, width=100)
-        self.log_text.grid(row=14, column=0, columnspan=3, sticky=(E, W, N, S), pady=5)
+        self.log_text.grid(row=15, column=0, columnspan=3, sticky=(E, W, N, S), pady=5)
         
         self.root.columnconfigure(0, weight=1)
         self.root.rowconfigure(0, weight=1)
         main_frame.columnconfigure(1, weight=1)
-        main_frame.rowconfigure(14, weight=1)
+        main_frame.rowconfigure(15, weight=1)
     
     def log(self, message):
         self.log_text.insert(END, message + "\n")
@@ -448,10 +455,23 @@ class SessionFixer:
         self.root.update()
     
     def select_session_path(self):
-        path = filedialog.askdirectory(title="Select Session Folder")
-        if path:
-            self.path_var.set(path)
-            self.log(f"✅ Selected: {path}")
+        try:
+            result = subprocess.run(
+                ['zenity', '--file-selection', '--directory', '--title=Select Session Folder'],
+                capture_output=True,
+                text=True,
+                check=False
+            )
+            if result.returncode == 0:
+                path = result.stdout.strip()
+                if path:
+                    self.path_var.set(path)
+                    self.log(f"✅ Selected: {path}")
+        except FileNotFoundError:
+            messagebox.showerror(
+                "Zenity Not Found",
+                "Zenity is not installed. Install it with:\nsudo apt install zenity"
+            )
     
     def on_task_selected(self, event=None):
         task_name = self.task_var.get()
@@ -517,14 +537,14 @@ class SessionFixer:
                     try:
                         episode_num = int(parts[-1])
                         
-                        if episode_num % 2 == 1:  
-                            # Odd episodes
-                            dest = li1_session / episode.name
-                            self.log(f"📁 Moving (odd)  {episode.name} → LI 1")
-                        else:  
+                        if episode_num % 2 == 0:
                             # Even episodes
+                            dest = li1_session / episode.name
+                            self.log(f"📁 Moving (even) {episode.name} → LI 1")
+                        else:
+                            # Odd episodes
                             dest = li2_session / episode.name
-                            self.log(f"📁 Moving (even) {episode.name} → LI 2")
+                            self.log(f"📁 Moving (odd)  {episode.name} → LI 2")
                         
                         if dest.exists():
                             shutil.rmtree(dest)
@@ -600,14 +620,14 @@ class SessionFixer:
         self.log("="*60 + "\n")
         
         try:
-            li1_path = session_path / "LI 1"
-            if li1_path.exists():
+            li1_path = self.find_li_folder(session_path, "LI 1")
+            if li1_path and li1_path.exists():
                 self.log("📝 Processing LI 1 descriptions...\n")
                 li1_result = self.fix_episode_descriptions(li1_path, li1_desc)
                 self.log(li1_result)
             
-            li2_path = session_path / "LI 2"
-            if li2_path.exists():
+            li2_path = self.find_li_folder(session_path, "LI 2")
+            if li2_path and li2_path.exists():
                 self.log("\n📝 Processing LI 2 descriptions...\n")
                 li2_result = self.fix_episode_descriptions(li2_path, li2_desc)
                 self.log(li2_result)
@@ -623,6 +643,46 @@ class SessionFixer:
         
         finally:
             self.is_processing = False
+            # Rename LI folders to include descriptions for clarity (always attempt)
+            try:
+                self.rename_li_folders(session_path, li1_desc, li2_desc)
+            except Exception as e:
+                self.log(f"⚠️ Folder rename skipped: {str(e)}")
+
+    def rename_li_folders(self, session_path, li1_desc, li2_desc):
+        def sanitize(name):
+            cleaned = re.sub(r'[\\/:*?"<>|]+', ' ', name)
+            cleaned = re.sub(r'\s+', ' ', cleaned).strip()
+            return cleaned[:120]
+
+        li1_base = "LI 1"
+        li2_base = "LI 2"
+        li1_target = f"{li1_base} - {sanitize(li1_desc)}"
+        li2_target = f"{li2_base} - {sanitize(li2_desc)}"
+
+        # Find existing LI folders (either plain or already renamed)
+        li1_folder = self.find_li_folder(session_path, li1_base)
+        li2_folder = self.find_li_folder(session_path, li2_base)
+
+        if not li1_folder:
+            self.log("⚠️ LI 1 folder not found for rename")
+        if not li2_folder:
+            self.log("⚠️ LI 2 folder not found for rename")
+
+        if li1_folder:
+            new_path = session_path / li1_target
+            if li1_folder.name != li1_target:
+                li1_folder.rename(new_path)
+                self.log(f"📝 Renamed folder: {li1_folder.name} → {li1_target}")
+
+        if li2_folder:
+            new_path = session_path / li2_target
+            if li2_folder.name != li2_target:
+                li2_folder.rename(new_path)
+                self.log(f"📝 Renamed folder: {li2_folder.name} → {li2_target}")
+
+    def find_li_folder(self, session_path, prefix):
+        return next((p for p in session_path.iterdir() if p.is_dir() and p.name.startswith(prefix)), None)
     
     def fix_episode_descriptions(self, li_path, correct_desc):
         result_log = ""
